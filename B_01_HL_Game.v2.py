@@ -129,13 +129,22 @@ num_rounds = int_check("Rounds <enter for infinite>: ",
 
 
 
-if num_rounds == "infinite":
+if num_rounds == "":
     mode = "infinite"
     num_rounds = 5
 
 # Get Game Parameters
-low_num = int_check("Low Number? ")
-high_num = int_check("High Number? ", low=low_num+1)
+default_params = yes_no("Do you want to use the default game parameters? ")
+if default_params == "yes":
+    low_num = 0
+    high_num = 10
+
+# allow user to choose high / low number
+else:
+    low_num = int_check("Low Number? ")
+    high_num = int_check("High Number? ", low=low_num+1)
+
+# calc max number of guesses
 guesses_allowed = calc_guesses(low_num, high_num)
 
 # Game loop starts here
@@ -148,7 +157,6 @@ while rounds_played < num_rounds:
         rounds_heading = f"\n💿💿💿 Round {rounds_played + 1} of {num_rounds} 💿💿💿"
 
     print(rounds_heading)
-    print()
 
     # Round starts here
     # Set guesses used to zero at the start of each round
@@ -181,9 +189,7 @@ while rounds_played < num_rounds:
         else:
             already_guessed.append(guess)
 
-        guesses_used += 1
-
-        # add one to the number of guesses used
+        # add one
         guesses_used += 1
 
         # compare the user's guesses with the secret number set up feedback statement
@@ -219,7 +225,6 @@ while rounds_played < num_rounds:
             print("\n💣💣💣 Careful you have one guess left! 💣💣💣\n")
 
     print()
-    print("End of round")
 
     # Round ends here
 
@@ -227,52 +232,18 @@ while rounds_played < num_rounds:
     if end_game == "yes":
         break
 
-    rounds_played += 1
-
     # Add round results to game history
+    history_feedback = f"Round {rounds_played}: {feedback}"
 
-    # initialise list to hold game history
-    game_history = []
+    game_history.append(history_feedback)
 
-    # get data (base component does this already, code below fore testing purposes)
-
-    while True:
-        rounds_played = input("Round? ")
-        if rounds_played == "":
-            break
-
-        user_points = int(input("User points? "))
-        comp_points = int(input("Computer points?"))
-        winner = input("Who won? ")
-        user_score = int(input("User score: "))
-        comp_score = int(input("Computer score: "))
-
-        game_results = (f"Round {rounds_played}: User points {user_points} | "
-                        f" Computer Points {comp_points}, {winner} wins "
-                        f"({user_score} | {comp_score})")
-
-        game_history.append(game_results)
-
-    print("Game History")
-
-    for item in game_history:
-        print(item)
-
-
-    # if users are in infinite mode, increase number of rounds!
-    if mode == "infinite":
-        num_rounds += 1
-
-
-
-
-# Game loop ends here
-
-
+    rounds_played += 1
+    all_scores.append(guesses_used)
 
 # check users have played at least one round
-# before calculating statistics.
+# before calculating stats.
 if rounds_played > 0:
+
     # Game history / statistics area
 
     # calculate statistics
@@ -291,6 +262,7 @@ if rounds_played > 0:
     if see_history == "yes":
         for item in game_history:
             print(item)
+            print()
 
 
 
